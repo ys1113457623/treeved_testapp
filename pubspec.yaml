@@ -41,6 +41,8 @@ dependencies:
   sleek_circular_slider: ^2.0.1
   flutter_screenutil: ^5.5.4
   intl: ^0.17.0
+  visibility_detector: ^0.3.3
+  carousel_slider: ^4.1.1
 
 dev_dependencies:
   flutter_test:

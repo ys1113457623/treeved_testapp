@@ -1,11 +1,14 @@
 import 'dart:math' as math;
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:treeved_testapp/utils.dart';
+import 'package:treeved_testapp/widgets/screen2.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 void main() {
   runApp(const MyApp());
@@ -44,7 +47,15 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   bool emiSelectione = false;
   bool emiSelectionc = true;
+  final List<bool> isSelected = <bool>[true, true, false];
+  bool isOpen = false;
+  String? selected;
+  List<int> list = [1, 2, 3, 4, 5];
+  final List<bool> _selectedFruits = <bool>[true, false, false];
+  bool vertical = false;
 
+  GlobalKey<ScaffoldState> _key = GlobalKey();
+  late DraggableScrollableController _controller;
   Widget slider = SleekCircularSlider(
     max: 487491,
     appearance: CircularSliderAppearance(
@@ -62,35 +73,8 @@ class _MyHomePageState extends State<MyHomePage> {
       infoProperties: info03,
     ),
     initialValue: 60,
-    onChange: (double value) {
-      print(value);
-    },
+    onChange: (double value) {},
   );
-  void _showModalBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-        top: Radius.circular(30),
-      )),
-      builder: (context) => DraggableScrollableSheet(
-          initialChildSize: 0.7,
-          maxChildSize: 0.9,
-          minChildSize: 0.32,
-          expand: false,
-          builder: (context, scrollController) {
-            return SingleChildScrollView(
-                controller: scrollController,
-                child: GestureDetector(
-                  onTap: (() {
-                    _showModalBottomSheet2(context);
-                  }),
-                  child: Text("color: Colors.black,"),
-                ));
-          }),
-    );
-  }
 
   void _showModalBottomSheet2(BuildContext context) {
     showModalBottomSheet(
@@ -100,16 +84,28 @@ class _MyHomePageState extends State<MyHomePage> {
           borderRadius: BorderRadius.vertical(
         top: Radius.circular(30),
       )),
-      builder: (context) => DraggableScrollableSheet(
-          initialChildSize: 0.5,
-          maxChildSize: 0.9,
-          minChildSize: 0.32,
-          expand: false,
-          builder: (context, scrollController) {
-            return Column(
-              children: [],
-            );
-          }),
+      builder: (context) => VisibilityDetector(
+        onVisibilityChanged: (VisibilityInfo info) {
+          if (info.visibleFraction == 1) {
+            setState(() {
+              isOpen = true;
+            });
+          } else {
+            setState(() {
+              isOpen = false;
+            });
+          }
+        },
+        key: _key,
+        child: DraggableScrollableSheet(
+            initialChildSize: 0.8,
+            maxChildSize: 0.9,
+            minChildSize: 0.32,
+            expand: false,
+            builder: (context, scrollController) {
+              return Screen2();
+            }),
+      ),
     );
   }
 
@@ -162,13 +158,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      emiSelectione
+                      isOpen
                           ? Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "nikunj how much do you need",
+                                  "credit amount",
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 25.sp),
                                 ),
@@ -188,7 +184,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "Sahil how much do you need",
+                                  "Hey how much do you need",
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 25.sp),
                                 ),
@@ -247,33 +243,29 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ),
-          Expanded(
-            child: Align(
-              alignment: FractionalOffset.bottomCenter,
-              child: Container(
-                height: 100.h,
-                width: double.infinity,
-                child: GestureDetector(
-                  onTap: (() {
-                    _showModalBottomSheet(context);
-                    setState(() {
-                      emiSelectione = true;
-                    });
-                  }),
-                  child: Center(
-                      child: Text(
-                    "Proceed To EMI Selection",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w600),
-                  )),
-                ),
-                decoration: BoxDecoration(
-                    color: Color(0xff3b479b),
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30.sp),
-                        topRight: Radius.circular(30.sp))),
+          Align(
+            alignment: FractionalOffset.bottomCenter,
+            child: Container(
+              height: 100.h,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  color: Color(0xff3b479b),
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30.sp),
+                      topRight: Radius.circular(30.sp))),
+              child: GestureDetector(
+                onTap: (() {
+                  _showModalBottomSheet2(context);
+                  setState(() {});
+                }),
+                child: Center(
+                    child: Text(
+                  "Proceed To EMI Selection",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w600),
+                )),
               ),
             ),
           )
